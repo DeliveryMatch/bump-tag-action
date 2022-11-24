@@ -38,8 +38,6 @@ async function run() {
         body: ""
       });
     }
-
-    core.info(`Created Released \x1b[32m${inputVersion || " - "}\x1b[0m`);
   } catch (error) {
     core.setFailed(error.message);
   }
