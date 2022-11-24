@@ -9758,7 +9758,8 @@ function createTag() {
 }
 
 function updateTag(tag) {
-  const splittedTag = tag.split(".");
+  const versionNumber = tag.split(":");
+  const splittedTag = versionNumber[0].split(".");
   // Invalid tag
   if (splittedTag.length !== 3) {
     return createTag();
