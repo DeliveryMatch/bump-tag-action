@@ -1,0 +1,11 @@
+---
+name: "Bump tag name"
+description: "Automaticly generate the version tag"
+
+outputs:
+  tag:
+    description: "Version Tag"
+
+runs:
+  using: "node16"
+  main: "action/index.js"
