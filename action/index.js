@@ -9717,12 +9717,12 @@ async function run() {
   try {
     const token = core.getInput("token");
     const octokit = github.getOctokit(token);
-    const { owner, repo } = github.context.repo;
-    const latestRelease = await octokit.rest.repos.getLatestRelease({
-      owner,
-      repo
-    });
-    core.info(JSON.stringify(latestRelease));
+    // const { owner, repo } = github.context.repo;
+    // const latestRelease = await octokit.rest.repos.getLatestRelease({
+    //   owner,
+    //   repo
+    // });
+    // core.info(JSON.stringify(latestRelease));
     // if (latestRelease.status !== 200) {
     //   core.setFailed(
     //     `Failed to get latest release (status=${latestRelease.status})`
