@@ -51,20 +51,20 @@ async function run() {
         const ref_rsp = await octokit.rest.git.createRef({
           ...github.context.repo,
           ref: `refs/tags/${newTag}`,
-          sha: response.data.sha
+          sha: ref_rsp.data.sha
         });
-        if (response.status !== 201) {
+        if (ref_rsp.status !== 201) {
           core.setFailed(
-            `Failed to create tag ref(status = ${response.status})`
+            `Failed to create tag ref(status = ${ref_rsp.status})`
           );
           return;
         }
         core.startGroup(
-          `CreateRef Result Data: \x1b[33m${response.status || "-"}\x1b[0m `
+          `CreateRef Result Data: \x1b[33m${ref_rsp.status || "-"}\x1b[0m `
         );
-        core.info(`${JSON.stringify(response, null, 2)}`);
+        core.info(`${JSON.stringify(ref_rsp, null, 2)}`);
         core.endGroup();
-        return response.data.sha;
+        return ref_rsp.data.sha;
       }
     );
   } catch (error) {
