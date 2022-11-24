@@ -24,11 +24,13 @@ async function run() {
         return;
       }
       const currentTag = latestRelease.data.tag_name || createTag();
-      core.info(latestRelease);
+      core.info(latestRelease.data.tag_name);
+      let newTag = updateTag(currentTag);
+      core.info(newTag);
       await octokit.rest.repos.createRelease({
         owner,
         repo,
-        tag_name: updateTag(currentTag),
+        tag_name: newTag,
         body: ""
       });
     } catch {
