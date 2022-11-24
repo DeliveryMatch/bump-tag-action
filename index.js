@@ -12,7 +12,7 @@ async function run() {
     exec(
       `git for-each-ref --sort=-creatordate --count 1 --format="%(refname:short)" "refs/tags/*"`,
       async (err, tag, stderr) => {
-        const token = core.getInput("gh-token");
+        const token = core.getInput("token");
         const octokit = github.getOctokit(token);
         let newTag;
 
@@ -51,7 +51,7 @@ async function run() {
         const ref_rsp = await octokit.rest.git.createRef({
           ...github.context.repo,
           ref: `refs/tags/${newTag}`,
-          sha: ref_rsp.data.sha
+          sha: response.data.sha
         });
         if (ref_rsp.status !== 201) {
           core.setFailed(
