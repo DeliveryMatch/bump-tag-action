@@ -8,31 +8,27 @@ dayjs.locale("nl");
 
 async function run() {
   try {
-    const token = core.getInput("token");
-    const octokit = github.getOctokit(token);
-    const { owner, repo } = github.context.repo;
-
-    const latestRelease = await octokit.rest.repos.getLatestRelease({
-      owner,
-      repo
-    });
-    if (latestRelease.status !== 200) {
-      core.setFailed(
-        `Failed to get latest release (status=${latestRelease.status})`
-      );
-      return;
-    }
-
-    const currentTag = latestRelease.data.tag_name || createTag();
-
-    await octokit.rest.repos.createRelease({
-      owner,
-      repo,
-      tag_name: updateTag(currentTag),
-      body: ""
-    });
-
-    core.info(`Created Released \x1b[32m${inputVersion || " - "}\x1b[0m`);
+    // const token = core.getInput("token");
+    // const octokit = github.getOctokit(token);
+    // const { owner, repo } = github.context.repo;
+    // const latestRelease = await octokit.rest.repos.getLatestRelease({
+    //   owner,
+    //   repo
+    // });
+    // if (latestRelease.status !== 200) {
+    //   core.setFailed(
+    //     `Failed to get latest release (status=${latestRelease.status})`
+    //   );
+    //   return;
+    // }
+    // const currentTag = latestRelease.data.tag_name || createTag();
+    // await octokit.rest.repos.createRelease({
+    //   owner,
+    //   repo,
+    //   tag_name: updateTag(currentTag),
+    //   body: ""
+    // });
+    // core.info(`Created Released \x1b[32m${inputVersion || " - "}\x1b[0m`);
   } catch (error) {
     core.setFailed(error.message);
   }
