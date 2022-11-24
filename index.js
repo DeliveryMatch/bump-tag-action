@@ -10,7 +10,8 @@ async function run() {
   try {
     const token = core.getInput("token");
     const octokit = github.getOctokit(token);
-    // const { owner, repo } = github.context.repo;
+    const { owner, repo } = github.context.repo;
+    core.info(JSON.stringify({ owner, repo }));
     // const latestRelease = await octokit.rest.repos.getLatestRelease({
     //   owner,
     //   repo
