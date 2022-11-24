@@ -9731,6 +9731,7 @@ async function run() {
         return;
       }
       const currentTag = latestRelease.data.tag_name || createTag();
+      core.info(latestRelease);
       await octokit.rest.repos.createRelease({
         owner,
         repo,
