@@ -9728,7 +9728,7 @@ async function run() {
       `git for-each-ref --sort=-creatordate --count 1 --format="%(refname:short)" "refs/tags/*"`,
       async (err, tag, stderr) => {
         const token = core.getInput("gh-token");
-        const oktokit = github.getOctokit(token);
+        const octokit = github.getOctokit(token);
         let newTag;
 
         if (!tag) {
@@ -9742,7 +9742,7 @@ async function run() {
         core.info(`current tag: ${tag}`);
         core.info(`new tag: ${newTag}`);
         core.endGroup();
-        const response = await oktokit.rest.git.createTag({
+        const response = await octokit.rest.git.createTag({
           ...github.context.repo,
           tag: newTag,
           message: `New version: ${newTag}`,
