@@ -1,6 +1,5 @@
 const core = require("@actions/core");
 const github = require("@actions/github");
-const { exec } = require("child_process");
 const dayjs = require("dayjs");
 const weekOfYear = require("dayjs/plugin/weekOfYear");
 dayjs.extend(weekOfYear);
@@ -9,64 +8,31 @@ dayjs.locale("nl");
 
 async function run() {
   try {
-    exec(
-      `git for-each-ref --sort=-creatordate --count 1 --format="%(refname:short)" "refs/tags/*"`,
-      async (err, tag, stderr) => {
-        const token = core.getInput("token");
-        const octokit = github.getOctokit(token);
-        let newTag;
+    const token = core.getInput("token");
+    const octokit = github.getOctokit(token);
+    const { owner, repo } = github.context.repo;
 
-        if (!tag) {
-          newTag = createTag();
-        } else {
-          newTag = createTag();
-        }
-        core.setOutput("tag", newTag);
+    const latestRelease = await octokit.rest.repos.getLatestRelease({
+      owner,
+      repo
+    });
+    if (latestRelease.status !== 200) {
+      core.setFailed(
+        `Failed to get latest release (status=${latestRelease.status})`
+      );
+      return;
+    }
 
-        core.startGroup("Generating tag");
-        core.info(`current tag: ${tag}`);
-        core.info(`new tag: ${newTag}`);
-        core.endGroup();
-        const response = await octokit.rest.git.createTag({
-          ...github.context.repo,
-          tag: newTag,
-          message: `New version: ${newTag}`,
-          object: github.context.sha,
-          type: "commit"
-        });
+    const currentTag = latestRelease.data.tag_name || createTag();
 
-        if (response.status !== 201) {
-          core.setFailed(
-            `Failed to create tag object (status=${response.status})`
-          );
-          return;
-        }
-        core.startGroup(
-          `CreateTag Result Data (${github.context.repo.owner}/${
-            github.context.repo.repo
-          }): \x1b[33m${response.status || "-"}\x1b[0m `
-        );
-        core.info(`${JSON.stringify(response, null, 2)}`);
-        core.endGroup();
-        const ref_rsp = await octokit.rest.git.createRef({
-          ...github.context.repo,
-          ref: `refs/tags/${newTag}`,
-          sha: response.data.sha
-        });
-        if (ref_rsp.status !== 201) {
-          core.setFailed(
-            `Failed to create tag ref(status = ${ref_rsp.status})`
-          );
-          return;
-        }
-        core.startGroup(
-          `CreateRef Result Data: \x1b[33m${ref_rsp.status || "-"}\x1b[0m `
-        );
-        core.info(`${JSON.stringify(ref_rsp, null, 2)}`);
-        core.endGroup();
-        return ref_rsp.data.sha;
-      }
-    );
+    await octokit.rest.repos.createRelease({
+      owner,
+      repo,
+      tag_name: updateTag(currentTag),
+      body: ""
+    });
+
+    core.info(`Created Released \x1b[32m${inputVersion || " - "}\x1b[0m`);
   } catch (error) {
     core.setFailed(error.message);
   }
